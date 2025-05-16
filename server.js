@@ -9,6 +9,7 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   console.log("AUTOPLAC API ");
+  res.send("Welcome to AUTOPLAC API");
 });
 
 app.listen(PORT, () => {
