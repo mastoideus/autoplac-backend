@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-  clerkId: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
+  password: { type: String, required: true, unique: true },
   role: {
     type: String,
-    enum: ["buyer", "private_seller", "store_seller"],
-    default: "buyer",
+    enum: ["private_seller", "store_seller"],
+    default: "private_seller",
   },
-  phone: { type: String },
-  profileImage: { type: String },
+  phone: { type: String, required: false },
+  city: { type: String, required: false },
+  isVerified: { type: Boolean, required: false, default: false },
+  profileImage: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
 });
 

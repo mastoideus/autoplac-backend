@@ -1,13 +1,38 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const carSchema = new mongoose.Schema({
+const CarSchema = new mongoose.Schema({
   basicInfo: {
-    brand: { type: String, required: true, index: true },
-    model: { type: String, required: true, index: true },
+    brand: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CarBrand",
+      required: true,
+    },
+    brandName: { type: String, required: true },
+    status: [String],
+    model: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CarModel",
+      required: true,
+    },
+    modelName: { type: String, required: true },
     year: { type: Number, required: true },
     price: { type: Number, required: true, index: true },
     mileage: { type: Number },
     description: { type: String },
+    type: {
+      type: String,
+      enum: [
+        "kupe",
+        "kabriolet",
+        "hatchback",
+        "kombi",
+        "ostalo",
+        "monovolumen",
+        "suv",
+        "limuzina",
+        "karavan",
+      ],
+    },
   },
   mechanics: {
     fuelType: { type: String },
@@ -34,7 +59,7 @@ const carSchema = new mongoose.Schema({
     seats: Number,
     wheels: {
       sizeInches: Number,
-      type: String,
+      wheelType: String,
     },
   },
   features: {
@@ -60,14 +85,40 @@ const carSchema = new mongoose.Schema({
     region: String,
   },
   images: [String],
-  store: { type: mongoose.Schema.Types.ObjectId, ref: "Store" },
+  store: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Store",
+    required: false,
+  },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-carSchema.index({ "basicInfo.brand": 1 });
-carSchema.index({ "basicInfo.model": 1 });
-carSchema.index({ "basicInfo.price": 1 });
-carSchema.index({ "basicInfo.model": "text", "basicInfo.brand": "text" });
+CarSchema.pre("save", async function (next) {
+  if (this.isModified("basicInfo.brand")) {
+    const brand = await mongoose
+      .model("CarBrand")
+      .findById(this.basicInfo.brand);
+    this.basicInfo.brandName = brand?.name || "";
+  }
 
-module.exports = mongoose.model("Car", carSchema);
+  if (this.isModified("basicInfo.model")) {
+    const model = await mongoose
+      .model("CarModel")
+      .findById(this.basicInfo.model);
+    this.basicInfo.modelName = model?.name || "";
+  }
+
+  next();
+});
+
+CarSchema.index({ "basicInfo.brand": 1 });
+CarSchema.index({ "basicInfo.model": 1 });
+
+CarSchema.index({
+  "basicInfo.brandName": "text",
+  "basicInfo.modelName": "text",
+  "basicInfo.description": "text",
+});
+
+export default mongoose.model("Car", CarSchema);
