@@ -6,6 +6,7 @@ import {
   verifyEmail,
   resendVerificationEmail,
   generateRefreshToken,
+  logoutUser,
 } from "../controllers/auth-controllers.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -17,5 +18,6 @@ router.post("/change-pass", authMiddleware, changePassword);
 router.get("/verify-email", verifyEmail);
 router.post("/resend-verification-email", resendVerificationEmail);
 router.get("/refresh", generateRefreshToken);
+router.get("/logout", logoutUser);
 
 export default router;

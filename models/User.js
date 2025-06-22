@@ -13,6 +13,14 @@ const UserSchema = new mongoose.Schema({
   city: { type: String, required: false },
   isVerified: { type: Boolean, required: false, default: false },
   profileImage: { type: String, required: false },
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Car",
+      required: false,
+      default: [],
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
 });
 

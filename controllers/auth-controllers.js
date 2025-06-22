@@ -227,9 +227,26 @@ const generateRefreshToken = async (req, res, next) => {
   }
 };
 
+const logoutUser = async (req, res, next) => {
+  console.log("Incoming cookies:", req.cookies);
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "Lax",
+      secure: false,
+    });
+
+    return res.status(200).json({ message: "Uspješno ste se odjavili" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    next(error);
+  }
+};
+
 export {
   registerUser,
   loginUser,
+  logoutUser,
   changePassword,
   verifyEmail,
   resendVerificationEmail,
