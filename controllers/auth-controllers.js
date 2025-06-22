@@ -102,9 +102,9 @@ const loginUser = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "Lax", // ← Change this
-      secure: false, // ← Use true in production with HTTPS
-      maxAge: 24 * 7 * 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const { password: userPassword, ...userData } = user._doc;
@@ -232,8 +232,8 @@ const logoutUser = async (req, res, next) => {
   try {
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "Lax",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
     return res.status(200).json({ message: "Uspješno ste se odjavili" });
